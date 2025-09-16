@@ -33,7 +33,7 @@ let cellSize = 40;
 let mage = { x: 0, y: 0 };
 let goal = { x: 0, y: 0 };
 
-// ==================== HARD MAZE 20x20 ====================
+// ==================== HARD MAZE 20x20 (more complex) ====================
 maze = [
  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
  [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1],
@@ -56,6 +56,13 @@ maze = [
  [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
  [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
+
+// ==================== PRELOAD IMAGES ====================
+const mageImg = new Image();
+mageImg.src = "assets/mage.png";
+
+const goalImg = new Image();
+goalImg.src = "assets/goal.png";
 
 // ==================== GAME LOOP ====================
 function startGame() {
@@ -92,18 +99,12 @@ function drawMaze() {
     }
   }
 
-  // Mage
-  const mageImg = new Image();
-  mageImg.src = "assets/mage.png";
-  mageImg.onload = () => drawGlowyCircle(mageImg, mage.x, mage.y, "cyan");
-
-  // Goal
-  const goalImg = new Image();
-  goalImg.src = "assets/goal.png";
-  goalImg.onload = () => drawGlowyCircle(goalImg, goal.x, goal.y, "gold");
+  // Draw Mage & Goal each frame (glowy)
+  drawGlowyCircle(mageImg, mage.x, mage.y, "cyan");
+  drawGlowyCircle(goalImg, goal.x, goal.y, "gold");
 }
 
-// Draw image as round glowy circle
+// Draw round glowy image
 function drawGlowyCircle(img, x, y, glowColor) {
   const centerX = x * cellSize + cellSize / 2;
   const centerY = y * cellSize + cellSize / 2;
@@ -111,7 +112,7 @@ function drawGlowyCircle(img, x, y, glowColor) {
 
   ctx.save();
   ctx.shadowColor = glowColor;
-  ctx.shadowBlur = 15;
+  ctx.shadowBlur = 20;
   ctx.beginPath();
   ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
   ctx.closePath();
@@ -132,6 +133,7 @@ function moveMage(dx, dy) {
   }
 }
 
+// Keyboard controls
 window.addEventListener("keydown", e => {
   if (e.key === "ArrowUp") moveMage(0, -1);
   if (e.key === "ArrowDown") moveMage(0, 1);
@@ -140,7 +142,6 @@ window.addEventListener("keydown", e => {
 });
 
 // ==================== MOBILE CONTROLS ====================
-const arrows = document.getElementById("arrows"); // div containing 4 buttons
 document.getElementById("up-btn").addEventListener("click", () => moveMage(0, -1));
 document.getElementById("down-btn").addEventListener("click", () => moveMage(0, 1));
 document.getElementById("left-btn").addEventListener("click", () => moveMage(-1, 0));
@@ -183,3 +184,4 @@ async function loadLeaderboard() {
     rank++;
   });
 }
+
