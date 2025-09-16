@@ -1,122 +1,101 @@
-/* Reset + base styles */
-* {
+
+
+body, html {
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
-  font-family: "Trebuchet MS", sans-serif;
-}
-
-body {
-  background: #0d0d0d;
+  font-family: 'Arial', sans-serif;
+  background: #121212;
   color: #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
 }
 
-/* Page containers */
 .page {
   display: none;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
   text-align: center;
-  width: 100%;
-  max-width: 800px;
-  padding: 20px;
 }
 
 .page.active {
   display: block;
 }
 
-/* Start Page */
+/* 🔝 Top Right Logo */
+.top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.top-right .logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 0 15px cyan;
+  margin-right: 10px;
+}
+
+.top-right .intent-text {
+  font-size: 1.2em;
+  color: cyan;
+  font-weight: bold;
+}
+
+/* Center content */
+.center-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 .start-image {
-  width: 250px;
-  animation: glow 2s infinite alternate;
+  width: 200px;
+  height: auto;
+  border-radius: 15px;
   margin-bottom: 20px;
 }
 
-@keyframes glow {
-  from { filter: drop-shadow(0 0 5px #00f0ff); }
-  to { filter: drop-shadow(0 0 20px #00f0ff); }
+.welcome-text {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #ffcc00;
+  text-shadow: 0 0 10px gold;
 }
 
-/* Logo footer */
-footer {
-  margin-top: 20px;
-}
-
-.logo {
-  width: 120px;
-  opacity: 0.8;
-}
-
-/* Buttons */
-button {
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
+.start-btn {
+  font-size: 1.2em;
+  padding: 10px 25px;
   border: none;
-  padding: 12px 24px;
-  margin: 10px;
-  border-radius: 8px;
-  font-size: 18px;
-  font-weight: bold;
-  color: #fff;
+  border-radius: 10px;
+  background: cyan;
+  color: #000;
   cursor: pointer;
+  box-shadow: 0 0 15px cyan;
   transition: 0.3s;
 }
 
-button:hover {
-  transform: scale(1.1);
-  background: linear-gradient(90deg, #0072ff, #00c6ff);
+.start-btn:hover {
+  background: #00ffff;
+  box-shadow: 0 0 25px cyan;
 }
 
-/* Input field */
-input[type="text"] {
-  padding: 12px;
-  font-size: 18px;
-  border: 2px solid #0072ff;
-  border-radius: 8px;
-  outline: none;
-  margin-bottom: 15px;
-  width: 60%;
-  text-align: center;
-}
-
-/* Game Page */
-#game-page {
-  position: relative;
-}
-
-#game-canvas {
-  border: 3px solid #00c6ff;
-  background: #111;
-  margin-bottom: 15px;
-}
-
-#timer {
+/* Footer bottom-left */
+.bottom-left {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 22px;
-  font-weight: bold;
-  color: #00f0ff;
-  text-shadow: 0 0 10px #00f0ff;
+  bottom: 10px;
+  left: 20px;
+  font-size: 0.9em;
+  color: #aaa;
 }
 
-/* Leaderboard */
-#leaderboard-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 20px;
+.bottom-left a {
+  color: cyan;
+  text-decoration: none;
 }
 
-#leaderboard-list li {
-  background: #1a1a1a;
-  margin: 6px 0;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 18px;
-  color: #00f0ff;
-  text-align: left;
+.bottom-left a:hover {
+  text-decoration: underline;
 }
-
