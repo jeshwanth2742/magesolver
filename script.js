@@ -15,7 +15,7 @@ function showPage(name) {
 document.getElementById("start-btn").addEventListener("click", () => showPage("username"));
 document.getElementById("play-btn").addEventListener("click", () => {
   username = document.getElementById("username-input").value.trim();
-  if (username) startGame(); // single maze
+  if (username) startGame();
 });
 document.getElementById("replay-btn").addEventListener("click", startGame);
 document.getElementById("exit-btn").addEventListener("click", () => showPage("start"));
@@ -35,16 +35,21 @@ let goal = { x: 0, y: 0 };
 
 // ==================== SINGLE COMPLEX MAZE ====================
 maze = [
-  [1,1,0,0,0,1,1,1,0,1],
-  [0,1,1,1,0,1,0,1,0,1],
-  [0,0,0,1,1,1,0,1,1,1],
-  [1,1,1,0,0,1,1,0,0,1],
-  [1,0,1,1,1,1,0,1,0,1],
-  [1,0,0,0,0,1,0,1,1,1],
-  [1,1,1,1,0,1,0,0,0,1],
-  [0,0,0,1,1,1,1,1,0,1],
-  [1,1,1,0,0,0,0,1,1,1],
-  [1,0,1,1,1,1,1,0,0,1],
+  [1,1,0,0,0,1,1,1,0,1,1,0,1,1,1],
+  [0,1,1,1,0,1,0,1,0,1,0,1,1,0,1],
+  [0,0,0,1,1,1,0,1,1,1,0,1,0,1,1],
+  [1,1,1,0,0,1,1,0,0,1,1,1,0,0,1],
+  [1,0,1,1,1,1,0,1,0,1,0,1,1,1,1],
+  [1,0,0,0,0,1,0,1,1,1,0,0,0,1,0],
+  [1,1,1,1,0,1,0,0,0,1,1,1,0,1,1],
+  [0,0,0,1,1,1,1,1,0,0,0,1,1,0,1],
+  [1,1,1,0,0,0,0,1,1,1,0,1,0,1,1],
+  [1,0,1,1,1,1,1,0,0,1,1,1,1,1,0],
+  [1,1,0,0,1,0,1,1,1,0,0,1,0,1,1],
+  [0,1,1,0,1,1,0,0,1,1,1,1,0,0,1],
+  [1,0,1,1,1,0,1,1,0,0,1,0,1,1,1],
+  [1,1,0,0,1,1,1,0,1,1,0,1,0,1,0],
+  [1,1,1,1,0,0,1,1,1,0,1,1,1,0,1],
 ];
 
 // ==================== GAME LOOP ====================
@@ -66,7 +71,7 @@ function startGame() {
   drawMaze();
 }
 
-// Draw maze + mage + goal
+// ==================== DRAW MAZE ====================
 function drawMaze() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -86,12 +91,29 @@ function drawMaze() {
   // Mage
   const mageImg = new Image();
   mageImg.src = "assets/mage.png";
-  ctx.drawImage(mageImg, mage.x * cellSize, mage.y * cellSize, cellSize, cellSize);
+  mageImg.onload = () => drawGlowyCircle(mageImg, mage.x, mage.y, "cyan");
 
   // Goal
   const goalImg = new Image();
   goalImg.src = "assets/goal.png";
-  ctx.drawImage(goalImg, goal.x * cellSize, goal.y * cellSize, cellSize, cellSize);
+  goalImg.onload = () => drawGlowyCircle(goalImg, goal.x, goal.y, "gold");
+}
+
+// Draw image as round glowy circle
+function drawGlowyCircle(img, x, y, glowColor) {
+  const centerX = x * cellSize + cellSize / 2;
+  const centerY = y * cellSize + cellSize / 2;
+  const radius = cellSize / 2 - 2;
+
+  ctx.save();
+  ctx.shadowColor = glowColor;
+  ctx.shadowBlur = 15;
+  ctx.beginPath();
+  ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(img, x * cellSize, y * cellSize, cellSize, cellSize);
+  ctx.restore();
 }
 
 // ==================== MOVEMENT ====================
@@ -128,10 +150,7 @@ async function gameComplete() {
   const snap = await getDoc(ref);
 
   if (!snap.exists() || timer < snap.data().bestTime) {
-    await setDoc(ref, {
-      username: username,
-      bestTime: timer
-    });
+    await setDoc(ref, { username: username, bestTime: timer }, { merge: true });
   }
 
   loadLeaderboard();
@@ -151,7 +170,7 @@ async function loadLeaderboard() {
   querySnapshot.forEach(docSnap => {
     const data = docSnap.data();
     const li = document.createElement("li");
-    li.innerText = `${rank}. ${data.username} — ${data.bestTime.toFixed(2)}s`;
+    li.innerHTML = `<span>${rank}. ${data.username}</span> — <span>${data.bestTime.toFixed(2)}s</span>`;
     leaderboardList.appendChild(li);
     rank++;
   });
