@@ -1,0 +1,155 @@
+/* -----------------------------
+   General Body Styling
+----------------------------- */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a2e;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* -----------------------------
+   Start Page
+----------------------------- */
+#start-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.glow-image {
+    width: 200px;
+    height: 200px;
+    animation: glow 2s infinite alternate;
+    margin-bottom: 20px;
+}
+
+@keyframes glow {
+    from { filter: drop-shadow(0 0 10px #fffa); }
+    to { filter: drop-shadow(0 0 30px #fff8); }
+}
+
+#start-page h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4a4ae0;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #6a6af0;
+}
+
+/* -----------------------------
+   Username Page
+----------------------------- */
+#username-page input {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    margin-right: 10px;
+}
+
+/* -----------------------------
+   Game Area Grid
+----------------------------- */
+#game-area {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.row {
+    display: flex;
+}
+
+.cell {
+    width: 60px;
+    height: 60px;
+    border: 2px solid #555;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2px;
+    background-color: #222;
+    border-radius: 5px;
+}
+
+.cell img {
+    width: 80%;
+    height: 80%;
+}
+
+/* -----------------------------
+   Level Selection
+----------------------------- */
+#level-select {
+    margin-top: 20px;
+}
+
+#level-select button {
+    margin: 0 5px;
+}
+
+/* -----------------------------
+   Timer
+----------------------------- */
+#timer {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* -----------------------------
+   Leaderboard
+----------------------------- */
+#leaderboard {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+#leaderboard li {
+    margin: 5px 0;
+}
+
+/* -----------------------------
+   Footer / Branding
+----------------------------- */
+#game-footer {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+#branding {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 5px;
+}
+
+.anoma-logo {
+    width: 30px;
+    height: 30px;
+}
+
+.branding-text {
+    font-size: 12px;
+    color: #aaa;
+}
