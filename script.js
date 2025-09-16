@@ -2,7 +2,6 @@
 const pages = {
   start: document.getElementById("start-page"),
   username: document.getElementById("username-page"),
-  level: document.getElementById("level-page"),
   game: document.getElementById("game-page"),
   leaderboard: document.getElementById("leaderboard-page"),
 };
@@ -16,14 +15,9 @@ function showPage(name) {
 document.getElementById("start-btn").addEventListener("click", () => showPage("username"));
 document.getElementById("play-btn").addEventListener("click", () => {
   username = document.getElementById("username-input").value.trim();
-  if (username) showPage("level");
+  if (username) startGame(); // single maze
 });
-document.querySelectorAll(".level-btn").forEach(btn => {
-  btn.addEventListener("click", () => {
-    startGame(btn.dataset.level);
-  });
-});
-document.getElementById("replay-btn").addEventListener("click", () => showPage("level"));
+document.getElementById("replay-btn").addEventListener("click", startGame);
 document.getElementById("exit-btn").addEventListener("click", () => showPage("start"));
 
 // ==================== GAME VARIABLES ====================
@@ -39,45 +33,27 @@ let cellSize = 40;
 let mage = { x: 0, y: 0 };
 let goal = { x: 0, y: 0 };
 
-// ==================== DEMO MAZES ====================
-const mazes = {
-  easy: [
-    [1,1,0,0,0],
-    [0,1,0,1,1],
-    [0,1,1,1,0],
-    [0,0,0,1,0],
-    [0,0,0,1,1]
-  ],
-  medium: [
-    [1,1,0,0,0,0,0],
-    [0,1,1,1,0,1,0],
-    [0,0,0,1,0,1,0],
-    [0,1,0,1,1,1,0],
-    [0,1,0,0,0,0,0],
-    [0,1,1,1,1,1,0],
-    [0,0,0,0,0,1,1]
-  ],
-  hard: [
-    [1,1,0,0,0,0,0,0,0],
-    [0,1,0,1,1,1,1,1,0],
-    [0,1,0,0,0,0,0,1,0],
-    [0,1,1,1,1,1,0,1,0],
-    [0,0,0,0,0,1,0,1,0],
-    [1,1,1,1,0,1,0,1,0],
-    [1,0,0,1,0,1,0,1,0],
-    [1,1,0,1,1,1,1,1,0],
-    [0,1,0,0,0,0,0,0,1]
-  ]
-};
+// ==================== SINGLE COMPLEX MAZE ====================
+maze = [
+  [1,1,0,0,0,1,1,1,0,1],
+  [0,1,1,1,0,1,0,1,0,1],
+  [0,0,0,1,1,1,0,1,1,1],
+  [1,1,1,0,0,1,1,0,0,1],
+  [1,0,1,1,1,1,0,1,0,1],
+  [1,0,0,0,0,1,0,1,1,1],
+  [1,1,1,1,0,1,0,0,0,1],
+  [0,0,0,1,1,1,1,1,0,1],
+  [1,1,1,0,0,0,0,1,1,1],
+  [1,0,1,1,1,1,1,0,0,1],
+];
 
 // ==================== GAME LOOP ====================
-function startGame(level) {
-  maze = mazes[level];
+function startGame() {
   cellSize = canvas.width / maze.length;
 
-  // Find start (top-left 1) and goal (bottom-right 1)
+  // Start top-left, goal bottom-right
   mage = { x: 0, y: 0 };
-  goal = { x: maze.length - 1, y: maze.length - 1 };
+  goal = { x: maze[0].length - 1, y: maze.length - 1 };
 
   timer = 0;
   clearInterval(timerInterval);
@@ -96,6 +72,10 @@ function drawMaze() {
 
   for (let y = 0; y < maze.length; y++) {
     for (let x = 0; x < maze[y].length; x++) {
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x * cellSize, y * cellSize, cellSize, cellSize);
+
       if (maze[y][x] === 0) {
         ctx.fillStyle = "black";
         ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
@@ -143,7 +123,6 @@ import { doc, getDoc, setDoc, collection, query, getDocs, orderBy, limit }
 async function gameComplete() {
   clearInterval(timerInterval);
 
-  // Save score to Firestore
   const db = window.db;
   const ref = doc(db, "leaderboard", username);
   const snap = await getDoc(ref);
@@ -177,4 +156,3 @@ async function loadLeaderboard() {
     rank++;
   });
 }
-
