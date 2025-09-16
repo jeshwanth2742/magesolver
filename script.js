@@ -33,30 +33,34 @@ let cellSize = 40;
 let mage = { x: 0, y: 0 };
 let goal = { x: 0, y: 0 };
 
-// ==================== SINGLE COMPLEX MAZE ====================
+// ==================== HARD MAZE 20x20 ====================
 maze = [
-  [1,1,0,0,0,1,1,1,0,1,1,0,1,1,1],
-  [0,1,1,1,0,1,0,1,0,1,0,1,1,0,1],
-  [0,0,0,1,1,1,0,1,1,1,0,1,0,1,1],
-  [1,1,1,0,0,1,1,0,0,1,1,1,0,0,1],
-  [1,0,1,1,1,1,0,1,0,1,0,1,1,1,1],
-  [1,0,0,0,0,1,0,1,1,1,0,0,0,1,0],
-  [1,1,1,1,0,1,0,0,0,1,1,1,0,1,1],
-  [0,0,0,1,1,1,1,1,0,0,0,1,1,0,1],
-  [1,1,1,0,0,0,0,1,1,1,0,1,0,1,1],
-  [1,0,1,1,1,1,1,0,0,1,1,1,1,1,0],
-  [1,1,0,0,1,0,1,1,1,0,0,1,0,1,1],
-  [0,1,1,0,1,1,0,0,1,1,1,1,0,0,1],
-  [1,0,1,1,1,0,1,1,0,0,1,0,1,1,1],
-  [1,1,0,0,1,1,1,0,1,1,0,1,0,1,0],
-  [1,1,1,1,0,0,1,1,1,0,1,1,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+ [1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1],
+ [0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+ [1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
+ [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
+ [1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,0,0,0,0,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,1,1,1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,0,1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,1,1,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,0,0,0,0,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,1,1,1,1,1,1,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,0,0,0,0,0,0,0,0,1,0,1,0,1,0,1],
+ [1,0,1,0,1,1,1,1,1,1,1,1,1,1,0,1,0,1,0,1],
+ [1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,1],
+ [1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,0,1],
+ [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1],
+ [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
 ];
 
 // ==================== GAME LOOP ====================
 function startGame() {
   cellSize = canvas.width / maze.length;
 
-  // Start top-left, goal bottom-right
   mage = { x: 0, y: 0 };
   goal = { x: maze[0].length - 1, y: maze.length - 1 };
 
@@ -117,26 +121,30 @@ function drawGlowyCircle(img, x, y, glowColor) {
 }
 
 // ==================== MOVEMENT ====================
-window.addEventListener("keydown", (e) => {
-  let newX = mage.x;
-  let newY = mage.y;
-
-  if (e.key === "ArrowUp") newY--;
-  if (e.key === "ArrowDown") newY++;
-  if (e.key === "ArrowLeft") newX--;
-  if (e.key === "ArrowRight") newX++;
-
+function moveMage(dx, dy) {
+  const newX = mage.x + dx;
+  const newY = mage.y + dy;
   if (maze[newY] && maze[newY][newX] === 1) {
     mage.x = newX;
     mage.y = newY;
+    drawMaze();
+    if (mage.x === goal.x && mage.y === goal.y) gameComplete();
   }
+}
 
-  drawMaze();
-
-  if (mage.x === goal.x && mage.y === goal.y) {
-    gameComplete();
-  }
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowUp") moveMage(0, -1);
+  if (e.key === "ArrowDown") moveMage(0, 1);
+  if (e.key === "ArrowLeft") moveMage(-1, 0);
+  if (e.key === "ArrowRight") moveMage(1, 0);
 });
+
+// ==================== MOBILE CONTROLS ====================
+const arrows = document.getElementById("arrows"); // div containing 4 buttons
+document.getElementById("up-btn").addEventListener("click", () => moveMage(0, -1));
+document.getElementById("down-btn").addEventListener("click", () => moveMage(0, 1));
+document.getElementById("left-btn").addEventListener("click", () => moveMage(-1, 0));
+document.getElementById("right-btn").addEventListener("click", () => moveMage(1, 0));
 
 // ==================== GAME COMPLETE ====================
 import { doc, getDoc, setDoc, collection, query, getDocs, orderBy, limit } 
