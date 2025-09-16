@@ -1,211 +1,180 @@
-// -----------------------------
-// Firebase Setup
-// -----------------------------
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push, query, orderByChild, limitToFirst, get } from "firebase/database";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCiKGqhSSCVQ3GPtnMA1DZSzemXLWoBM1M",
-  authDomain: "preepclicker.firebaseapp.com",
-  projectId: "preepclicker",
-  storageBucket: "preepclicker.firebasestorage.app",
-  messagingSenderId: "108481604",
-  appId: "1:108481604:web:d5064e43d4eb6abd68c011",
-  measurementId: "G-HV0WFYR4CB"
+// ==================== PAGE HANDLING ====================
+const pages = {
+  start: document.getElementById("start-page"),
+  username: document.getElementById("username-page"),
+  level: document.getElementById("level-page"),
+  game: document.getElementById("game-page"),
+  leaderboard: document.getElementById("leaderboard-page"),
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+function showPage(name) {
+  Object.values(pages).forEach(p => p.classList.remove("active"));
+  pages[name].classList.add("active");
+}
 
-// -----------------------------
-// Game Variables
-// -----------------------------
-let username;
-let startTime;
-let magePosition = { x: 0, y: 0 };
-let currentLevelMatrix;
+// Buttons
+document.getElementById("start-btn").addEventListener("click", () => showPage("username"));
+document.getElementById("play-btn").addEventListener("click", () => {
+  username = document.getElementById("username-input").value.trim();
+  if (username) showPage("level");
+});
+document.querySelectorAll(".level-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    startGame(btn.dataset.level);
+  });
+});
+document.getElementById("replay-btn").addEventListener("click", () => showPage("level"));
+document.getElementById("exit-btn").addEventListener("click", () => showPage("start"));
 
-// -----------------------------
-// Level Definitions (No walls, only empty cells, mage start 'S' and goal 'E')
-// -----------------------------
-const levels = {
+// ==================== GAME VARIABLES ====================
+const canvas = document.getElementById("game-canvas");
+const ctx = canvas.getContext("2d");
+
+let username = "";
+let timer = 0;
+let timerInterval = null;
+
+let maze = [];
+let cellSize = 40;
+let mage = { x: 0, y: 0 };
+let goal = { x: 0, y: 0 };
+
+// ==================== DEMO MAZES ====================
+const mazes = {
   easy: [
-    ['S', '', ''],
-    ['', '', ''],
-    ['', '', 'E']
+    [1,1,0,0,0],
+    [0,1,0,1,1],
+    [0,1,1,1,0],
+    [0,0,0,1,0],
+    [0,0,0,1,1]
   ],
   medium: [
-    ['S', '', '', ''],
-    ['', '', '', ''],
-    ['', '', '', ''],
-    ['', '', '', 'E']
+    [1,1,0,0,0,0,0],
+    [0,1,1,1,0,1,0],
+    [0,0,0,1,0,1,0],
+    [0,1,0,1,1,1,0],
+    [0,1,0,0,0,0,0],
+    [0,1,1,1,1,1,0],
+    [0,0,0,0,0,1,1]
   ],
   hard: [
-    ['S','','','',''],
-    ['','','','',''],
-    ['','','','',''],
-    ['','','','',''],
-    ['','','','','E']
+    [1,1,0,0,0,0,0,0,0],
+    [0,1,0,1,1,1,1,1,0],
+    [0,1,0,0,0,0,0,1,0],
+    [0,1,1,1,1,1,0,1,0],
+    [0,0,0,0,0,1,0,1,0],
+    [1,1,1,1,0,1,0,1,0],
+    [1,0,0,1,0,1,0,1,0],
+    [1,1,0,1,1,1,1,1,0],
+    [0,1,0,0,0,0,0,0,1]
   ]
 };
 
-// -----------------------------
-// Start Page & Username Logic
-// -----------------------------
-document.getElementById('start-game-btn').addEventListener('click', () => {
-  document.getElementById('start-page').style.display = 'none';
-  document.getElementById('username-page').style.display = 'block';
-});
+// ==================== GAME LOOP ====================
+function startGame(level) {
+  maze = mazes[level];
+  cellSize = canvas.width / maze.length;
 
-document.getElementById('username-submit').addEventListener('click', () => {
-  username = document.getElementById('username-input').value.trim();
-  if(username) {
-    document.getElementById('username-page').style.display = 'none';
-    document.getElementById('game-page').style.display = 'block';
-  } else {
-    alert('Please enter a username');
+  // Find start (top-left 1) and goal (bottom-right 1)
+  mage = { x: 0, y: 0 };
+  goal = { x: maze.length - 1, y: maze.length - 1 };
+
+  timer = 0;
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timer += 0.1;
+    document.getElementById("timer").innerText = `Time: ${timer.toFixed(2)}s`;
+  }, 100);
+
+  showPage("game");
+  drawMaze();
+}
+
+// Draw maze + mage + goal
+function drawMaze() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  for (let y = 0; y < maze.length; y++) {
+    for (let x = 0; x < maze[y].length; x++) {
+      if (maze[y][x] === 0) {
+        ctx.fillStyle = "black";
+        ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+      }
+    }
+  }
+
+  // Mage
+  const mageImg = new Image();
+  mageImg.src = "assets/mage.png";
+  ctx.drawImage(mageImg, mage.x * cellSize, mage.y * cellSize, cellSize, cellSize);
+
+  // Goal
+  const goalImg = new Image();
+  goalImg.src = "assets/goal.png";
+  ctx.drawImage(goalImg, goal.x * cellSize, goal.y * cellSize, cellSize, cellSize);
+}
+
+// ==================== MOVEMENT ====================
+window.addEventListener("keydown", (e) => {
+  let newX = mage.x;
+  let newY = mage.y;
+
+  if (e.key === "ArrowUp") newY--;
+  if (e.key === "ArrowDown") newY++;
+  if (e.key === "ArrowLeft") newX--;
+  if (e.key === "ArrowRight") newX++;
+
+  if (maze[newY] && maze[newY][newX] === 1) {
+    mage.x = newX;
+    mage.y = newY;
+  }
+
+  drawMaze();
+
+  if (mage.x === goal.x && mage.y === goal.y) {
+    gameComplete();
   }
 });
 
-// -----------------------------
-// Start Level
-// -----------------------------
-function startLevel(level) {
-  currentLevelMatrix = levels[level];
-  generateGrid(currentLevelMatrix);
-  startTime = Date.now();
-}
+// ==================== GAME COMPLETE ====================
+import { doc, getDoc, setDoc, collection, query, getDocs, orderBy, limit } 
+  from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-// -----------------------------
-// Generate Grid with Mage and Goal
-// -----------------------------
-function generateGrid(matrix) {
-  const area = document.getElementById('game-area');
-  area.innerHTML = '';
+async function gameComplete() {
+  clearInterval(timerInterval);
 
-  matrix.forEach((row, y) => {
-    const divRow = document.createElement('div');
-    divRow.className = 'row';
+  // Save score to Firestore
+  const db = window.db;
+  const ref = doc(db, "leaderboard", username);
+  const snap = await getDoc(ref);
 
-    row.forEach((cell, x) => {
-      const divCell = document.createElement('div');
-      divCell.className = 'cell';
-
-      if(cell === 'S') {
-        divCell.classList.add('mage');
-        magePosition = { x, y };
-        divCell.innerHTML = `<img src="assets/mage.png" alt="Mage">`;
-      }
-
-      if(cell === 'E') {
-        divCell.classList.add('goal');
-        divCell.innerHTML = `<img src="assets/goal.png" alt="Goal">`;
-      }
-
-      divRow.appendChild(divCell);
+  if (!snap.exists() || timer < snap.data().bestTime) {
+    await setDoc(ref, {
+      username: username,
+      bestTime: timer
     });
+  }
 
-    area.appendChild(divRow);
+  loadLeaderboard();
+  showPage("leaderboard");
+}
+
+// ==================== LEADERBOARD ====================
+async function loadLeaderboard() {
+  const db = window.db;
+  const leaderboardList = document.getElementById("leaderboard-list");
+  leaderboardList.innerHTML = "";
+
+  const q = query(collection(db, "leaderboard"), orderBy("bestTime", "asc"), limit(20));
+  const querySnapshot = await getDocs(q);
+
+  let rank = 1;
+  querySnapshot.forEach(docSnap => {
+    const data = docSnap.data();
+    const li = document.createElement("li");
+    li.innerText = `${rank}. ${data.username} — ${data.bestTime.toFixed(2)}s`;
+    leaderboardList.appendChild(li);
+    rank++;
   });
 }
 
-// -----------------------------
-// Mage Movement
-// -----------------------------
-document.addEventListener('keydown', (e) => {
-  if(!currentLevelMatrix) return;
-
-  let { x, y } = magePosition;
-  if(e.key === 'ArrowUp') y--;
-  else if(e.key === 'ArrowDown') y++;
-  else if(e.key === 'ArrowLeft') x--;
-  else if(e.key === 'ArrowRight') x++;
-
-  if(canMove(x, y)) {
-    moveMage(x, y);
-    magePosition = { x, y };
-    checkExit(x, y);
-  }
-});
-
-function canMove(x, y) {
-  return (
-    y >= 0 &&
-    x >= 0 &&
-    y < currentLevelMatrix.length &&
-    x < currentLevelMatrix[0].length
-  );
-}
-
-function moveMage(x, y) {
-  const area = document.getElementById('game-area');
-  area.querySelectorAll('.row').forEach((row, rowIndex) => {
-    row.querySelectorAll('.cell').forEach((cell, colIndex) => {
-      cell.classList.remove('mage');
-      cell.innerHTML = '';
-
-      if(currentLevelMatrix[rowIndex][colIndex] === 'S' || currentLevelMatrix[rowIndex][colIndex] === '') {
-        // empty cell
-      }
-      if(currentLevelMatrix[rowIndex][colIndex] === 'E') {
-        cell.classList.add('goal');
-        cell.innerHTML = `<img src="assets/goal.png" alt="Goal">`;
-      }
-
-      if(rowIndex === y && colIndex === x) {
-        cell.classList.add('mage');
-        cell.innerHTML = `<img src="assets/mage.png" alt="Mage">`;
-      }
-    });
-  });
-}
-
-// -----------------------------
-// Check Exit
-// -----------------------------
-function checkExit(x, y) {
-  if(currentLevelMatrix[y][x] === 'E') {
-    const totalTime = ((Date.now() - startTime) / 1000).toFixed(2);
-    alert(`You solved the level in ${totalTime}s!`);
-    saveToLeaderboard(username, totalTime);
-  }
-}
-
-// -----------------------------
-// Firebase Leaderboard
-// -----------------------------
-function saveToLeaderboard(username, time) {
-  const leaderboardRef = ref(db, 'mageEscapeLeaderboard');
-  push(leaderboardRef, { username, time }).then(() => updateLeaderboard());
-}
-
-async function updateLeaderboard() {
-  const leaderboardRef = ref(db, 'mageEscapeLeaderboard');
-  const q = query(leaderboardRef, orderByChild('time'), limitToFirst(20));
-  const snapshot = await get(q);
-
-  const leaderboardEl = document.getElementById('leaderboard');
-  leaderboardEl.innerHTML = '';
-
-  snapshot.forEach(child => {
-    const data = child.val();
-    const li = document.createElement('li');
-    li.textContent = `${data.username} - ${data.time}s`;
-    leaderboardEl.appendChild(li);
-  });
-}
-
-// -----------------------------
-// Timer Display
-// -----------------------------
-setInterval(() => {
-  if(startTime) {
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(2);
-    document.getElementById('timer').innerText = `Time: ${elapsed}s`;
-  }
-}, 100);
-
-// -----------------------------
-// Initial Leaderboard Load
-// -----------------------------
-updateLeaderboard();

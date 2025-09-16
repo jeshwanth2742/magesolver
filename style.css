@@ -1,155 +1,122 @@
-/* -----------------------------
-   General Body Styling
------------------------------ */
+/* Reset + base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Trebuchet MS", sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #1a1a2e;
-    color: #ffffff;
-    margin: 0;
-    padding: 0;
-    text-align: center;
+  background: #0d0d0d;
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* -----------------------------
-   Start Page
------------------------------ */
-#start-page {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+/* Page containers */
+.page {
+  display: none;
+  text-align: center;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
 }
 
-.glow-image {
-    width: 200px;
-    height: 200px;
-    animation: glow 2s infinite alternate;
-    margin-bottom: 20px;
+.page.active {
+  display: block;
+}
+
+/* Start Page */
+.start-image {
+  width: 250px;
+  animation: glow 2s infinite alternate;
+  margin-bottom: 20px;
 }
 
 @keyframes glow {
-    from { filter: drop-shadow(0 0 10px #fffa); }
-    to { filter: drop-shadow(0 0 30px #fff8); }
+  from { filter: drop-shadow(0 0 5px #00f0ff); }
+  to { filter: drop-shadow(0 0 20px #00f0ff); }
 }
 
-#start-page h1 {
-    font-size: 36px;
-    margin-bottom: 20px;
+/* Logo footer */
+footer {
+  margin-top: 20px;
 }
 
+.logo {
+  width: 120px;
+  opacity: 0.8;
+}
+
+/* Buttons */
 button {
-    padding: 10px 20px;
-    font-size: 16px;
-    background-color: #4a4ae0;
-    border: none;
-    border-radius: 5px;
-    color: #fff;
-    cursor: pointer;
-    transition: 0.3s;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  border: none;
+  padding: 12px 24px;
+  margin: 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 button:hover {
-    background-color: #6a6af0;
+  transform: scale(1.1);
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
 }
 
-/* -----------------------------
-   Username Page
------------------------------ */
-#username-page input {
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: none;
-    margin-right: 10px;
+/* Input field */
+input[type="text"] {
+  padding: 12px;
+  font-size: 18px;
+  border: 2px solid #0072ff;
+  border-radius: 8px;
+  outline: none;
+  margin-bottom: 15px;
+  width: 60%;
+  text-align: center;
 }
 
-/* -----------------------------
-   Game Area Grid
------------------------------ */
-#game-area {
-    display: inline-block;
-    margin-top: 20px;
+/* Game Page */
+#game-page {
+  position: relative;
 }
 
-.row {
-    display: flex;
+#game-canvas {
+  border: 3px solid #00c6ff;
+  background: #111;
+  margin-bottom: 15px;
 }
 
-.cell {
-    width: 60px;
-    height: 60px;
-    border: 2px solid #555;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 2px;
-    background-color: #222;
-    border-radius: 5px;
-}
-
-.cell img {
-    width: 80%;
-    height: 80%;
-}
-
-/* -----------------------------
-   Level Selection
------------------------------ */
-#level-select {
-    margin-top: 20px;
-}
-
-#level-select button {
-    margin: 0 5px;
-}
-
-/* -----------------------------
-   Timer
------------------------------ */
 #timer {
-    font-size: 18px;
-    margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 22px;
+  font-weight: bold;
+  color: #00f0ff;
+  text-shadow: 0 0 10px #00f0ff;
 }
 
-/* -----------------------------
-   Leaderboard
------------------------------ */
-#leaderboard {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-    font-size: 16px;
+/* Leaderboard */
+#leaderboard-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
 }
 
-#leaderboard li {
-    margin: 5px 0;
+#leaderboard-list li {
+  background: #1a1a1a;
+  margin: 6px 0;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 18px;
+  color: #00f0ff;
+  text-align: left;
 }
 
-/* -----------------------------
-   Footer / Branding
------------------------------ */
-#game-footer {
-    text-align: center;
-    margin-top: 30px;
-    font-size: 14px;
-    color: #ccc;
-}
-
-#branding {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    margin-top: 5px;
-}
-
-.anoma-logo {
-    width: 30px;
-    height: 30px;
-}
-
-.branding-text {
-    font-size: 12px;
-    color: #aaa;
-}
