@@ -10,11 +10,23 @@
 
   <!-- 🔥 Start Page -->
   <div id="start-page" class="page active">
-    <img src="assets/start.png" alt="Start Image" class="start-image">
-    <h1>Intent Games</h1>
-    <button id="start-btn">Start Game</button>
-    <footer>
+    
+    <!-- Top Right Logo + Intent Games -->
+    <div class="top-right">
       <img src="assets/logo.png" alt="Logo" class="logo">
+      <span class="intent-text">Intent Games</span>
+    </div>
+
+    <!-- Center Image and Welcome -->
+    <div class="center-content">
+      <img src="assets/start.png" alt="Start Image" class="start-image">
+      <h1 class="welcome-text">Welcome Mage</h1>
+      <button id="start-btn" class="start-btn">Start Game</button>
+    </div>
+
+    <!-- Footer left -->
+    <footer class="bottom-left">
+      Built by <a href="https://twitter.com/your_twitter" target="_blank">@Xiipher</a>
     </footer>
   </div>
 
@@ -28,24 +40,12 @@
     </footer>
   </div>
 
-  <!-- 🎚 Level Selection Page -->
-  <div id="level-page" class="page">
-    <h2>Select Difficulty</h2>
-    <button class="level-btn" data-level="easy">Easy</button>
-    <button class="level-btn" data-level="medium">Medium</button>
-    <button class="level-btn" data-level="hard">Hard</button>
-    <footer>
-      <img src="assets/logo.png" alt="Logo" class="logo">
-    </footer>
-  </div>
-
-  <!-- 🎮 Game Page -->
+  <!-- 🎮 Game Page, Leaderboard etc remain same -->
   <div id="game-page" class="page">
     <canvas id="game-canvas" width="600" height="600"></canvas>
     <div id="timer">Time: 0.00s</div>
   </div>
 
-  <!-- 🏆 Leaderboard Page -->
   <div id="leaderboard-page" class="page">
     <h2>Leaderboard</h2>
     <ol id="leaderboard-list"></ol>
@@ -58,12 +58,10 @@
 
   <!-- 🔗 Firebase + Script -->
   <script type="module">
-    // Firebase SDK imports
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
     import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-    // Your Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyCiKGqhSSCVQ3GPtnMA1DZSzemXLWoBM1M",
       authDomain: "preepclicker.firebaseapp.com",
@@ -74,15 +72,13 @@
       measurementId: "G-HV0WFYR4CB"
     };
 
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const analytics = getAnalytics(app);
     const db = getFirestore(app);
-
-    // Make db available for script.js
     window.db = db;
   </script>
 
   <script src="script.js" type="module"></script>
 </body>
 </html>
+
