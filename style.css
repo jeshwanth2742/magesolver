@@ -1,5 +1,3 @@
-
-
 body, html {
   margin: 0;
   padding: 0;
@@ -98,4 +96,13 @@ body, html {
 
 .bottom-left a:hover {
   text-decoration: underline;
+}
+
+/* Timer */
+#timer {
+  position: absolute;
+  top: 10px;
+  left: 20px;
+  font-size: 1.2em;
+  color: yellow;
 }
