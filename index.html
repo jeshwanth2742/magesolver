@@ -1,14 +1,15 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>MageEscape</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- 🔥 Start Page -->
+  <!-- Start Page -->
   <div id="start-page" class="page active">
     <div class="top-right">
       <img src="assets/logo.png" alt="Logo" class="logo">
@@ -26,21 +27,36 @@
     </footer>
   </div>
 
-  <!-- 🎮 Game Page -->
+  <!-- Game Page -->
   <div id="game-page" class="page">
     <canvas id="game-canvas" width="600" height="600"></canvas>
-    <div id="timer">Time: 0.00s</div>
+
+    <div id="hud">
+      <div id="timer">Time: 0.00s</div>
+      <div id="coords"></div>
+    </div>
+
+    <!-- Mobile arrows -->
+    <div id="arrows">
+      <button id="up-btn" class="arrow">▲</button>
+      <div class="hrow">
+        <button id="left-btn" class="arrow">◀</button>
+        <button id="down-btn" class="arrow">▼</button>
+        <button id="right-btn" class="arrow">▶</button>
+      </div>
+    </div>
+
+    <button id="exit-to-start" class="small-btn">Exit to Menu</button>
   </div>
 
-  <!-- 🏆 Win Page -->
+  <!-- Win Page -->
   <div id="win-page" class="page">
     <h2>🎉 You Escaped the Maze! 🎉</h2>
     <p id="final-time"></p>
-    <button id="replay-btn">Play Again</button>
+    <button id="replay-btn" class="start-btn">Play Again</button>
+    <button id="back-btn" class="small-btn">Back to Menu</button>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
