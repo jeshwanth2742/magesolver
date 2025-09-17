@@ -10,75 +10,37 @@
 
   <!-- 🔥 Start Page -->
   <div id="start-page" class="page active">
-    
-    <!-- Top Right Logo + Intent Games -->
     <div class="top-right">
       <img src="assets/logo.png" alt="Logo" class="logo">
       <span class="intent-text">Intent Games</span>
     </div>
 
-    <!-- Center Image and Welcome -->
     <div class="center-content">
       <img src="assets/start.png" alt="Start Image" class="start-image">
       <h1 class="welcome-text">Welcome Mage</h1>
       <button id="start-btn" class="start-btn">Start Game</button>
     </div>
 
-    <!-- Footer left -->
     <footer class="bottom-left">
-      Built by <a href="https://twitter.com/your_twitter" target="_blank">@Xiipher</a>
+      Built by <a href="https://x.com/undef112174?t=cV1KWhidgJpVjyMS_6lHqQ&s=09" target="_blank">@Xiipher</a>
     </footer>
   </div>
 
-  <!-- 📝 Username Input Page -->
-  <div id="username-page" class="page">
-    <h2>Enter your username</h2>
-    <input type="text" id="username-input" placeholder="Your name">
-    <button id="play-btn">Play</button>
-    <footer>
-      <img src="assets/logo.png" alt="Logo" class="logo">
-    </footer>
-  </div>
-
-  <!-- 🎮 Game Page, Leaderboard etc remain same -->
+  <!-- 🎮 Game Page -->
   <div id="game-page" class="page">
     <canvas id="game-canvas" width="600" height="600"></canvas>
     <div id="timer">Time: 0.00s</div>
   </div>
 
-  <div id="leaderboard-page" class="page">
-    <h2>Leaderboard</h2>
-    <ol id="leaderboard-list"></ol>
-    <button id="replay-btn">Replay</button>
-    <button id="exit-btn">Exit</button>
-    <footer>
-      <img src="assets/logo.png" alt="Logo" class="logo">
-    </footer>
+  <!-- 🏆 Win Page -->
+  <div id="win-page" class="page">
+    <h2>🎉 You Escaped the Maze! 🎉</h2>
+    <p id="final-time"></p>
+    <button id="replay-btn">Play Again</button>
   </div>
 
-  <!-- 🔗 Firebase + Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-analytics.js";
-    import { getFirestore } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCiKGqhSSCVQ3GPtnMA1DZSzemXLWoBM1M",
-      authDomain: "preepclicker.firebaseapp.com",
-      projectId: "preepclicker",
-      storageBucket: "preepclicker.firebasestorage.app",
-      messagingSenderId: "108481604",
-      appId: "1:108481604:web:d5064e43d4eb6abd68c011",
-      measurementId: "G-HV0WFYR4CB"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-    const db = getFirestore(app);
-    window.db = db;
-  </script>
-
-  <script src="script.js" type="module"></script>
+  <script src="script.js"></script>
 </body>
 </html>
+
 
