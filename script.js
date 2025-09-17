@@ -6,6 +6,12 @@ let exit = { row: 60, col: 60 };
 const canvas = document.getElementById("game-canvas");
 const ctx = canvas.getContext("2d");
 
+// Images
+const mageImg = new Image();
+mageImg.src = "assets/mage.png";
+const goalImg = new Image();
+goalImg.src = "assets/goal.png";
+
 // Pages
 const startPage = document.getElementById("start-page");
 const gamePage = document.getElementById("game-page");
@@ -29,79 +35,23 @@ fetch("maze_matrix_61x61.json")
   .then(res => res.json())
   .then(data => {
     mazeMatrix = data;
+    drawGame();
   });
 
-// Navigation between pages
+// Page switching
 function showPage(page) {
   [startPage, gamePage, winPage].forEach(p => p.classList.remove("active"));
   page.classList.add("active");
 }
 
-// Reset player
+// Reset game state
 function resetGame() {
   player = { row: 0, col: 0 };
+  clearInterval(timerInterval);
   startTime = null;
   timerEl.textContent = "Time: 0.00s";
   coordsEl.textContent = "";
-  clearInterval(timerInterval);
-  drawPlayer();
-}
-
-// Draw maze
-function drawMaze() {
-  ctx.fillStyle = "#cfcfcf";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-  for (let r = 0; r < mazeMatrix.length; r++) {
-    for (let c = 0; c < mazeMatrix[r].length; c++) {
-      if (mazeMatrix[r][c] === 1) {
-        ctx.fillStyle = "#000";
-        ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-
-        // White dot
-        ctx.fillStyle = "#fff";
-        ctx.beginPath();
-        ctx.arc(
-          c * TILE_SIZE + TILE_SIZE / 2,
-          r * TILE_SIZE + TILE_SIZE / 2,
-          1.5,
-          0,
-          Math.PI * 2
-        );
-        ctx.fill();
-      }
-    }
-  }
-
-  // Exit marker
-  ctx.fillStyle = "#4caf50";
-  ctx.beginPath();
-  ctx.arc(
-    exit.col * TILE_SIZE + TILE_SIZE / 2,
-    exit.row * TILE_SIZE + TILE_SIZE / 2,
-    4,
-    0,
-    Math.PI * 2
-  );
-  ctx.fill();
-}
-
-// Draw player
-function drawPlayer() {
-  if (!mazeMatrix) return;
-  drawMaze();
-  ctx.fillStyle = "#ff4444";
-  ctx.beginPath();
-  ctx.arc(
-    player.col * TILE_SIZE + TILE_SIZE / 2,
-    player.row * TILE_SIZE + TILE_SIZE / 2,
-    3,
-    0,
-    Math.PI * 2
-  );
-  ctx.fill();
-
-  coordsEl.textContent = `(${player.row}, ${player.col})`;
+  drawGame();
 }
 
 // Timer
@@ -113,7 +63,64 @@ function startTimer() {
   }, 100);
 }
 
-// Movement
+// Draw Maze Grid
+function drawMaze() {
+  ctx.fillStyle = "#cfcfcf";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2;
+
+  for (let r = 0; r < mazeMatrix.length; r++) {
+    for (let c = 0; c < mazeMatrix[r].length; c++) {
+      if (mazeMatrix[r][c] === 1) {
+        ctx.fillStyle = "#000";
+        ctx.fillRect(c * TILE_SIZE, r * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+
+        // Decorative white dot
+        ctx.fillStyle = "#fff";
+        ctx.beginPath();
+        ctx.arc(
+          c * TILE_SIZE + TILE_SIZE / 2,
+          r * TILE_SIZE + TILE_SIZE / 2,
+          1.2,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+      }
+    }
+  }
+}
+
+// Draw player + exit
+function drawGame() {
+  if (!mazeMatrix) return;
+
+  drawMaze();
+
+  // Goal
+  ctx.drawImage(
+    goalImg,
+    exit.col * TILE_SIZE,
+    exit.row * TILE_SIZE,
+    TILE_SIZE,
+    TILE_SIZE
+  );
+
+  // Player
+  ctx.drawImage(
+    mageImg,
+    player.col * TILE_SIZE,
+    player.row * TILE_SIZE,
+    TILE_SIZE,
+    TILE_SIZE
+  );
+
+  coordsEl.textContent = `(${player.row}, ${player.col})`;
+}
+
+// Move
 function movePlayer(dr, dc) {
   let newRow = player.row + dr;
   let newCol = player.col + dc;
@@ -127,12 +134,10 @@ function movePlayer(dr, dc) {
   ) {
     player.row = newRow;
     player.col = newCol;
-    drawPlayer();
+    drawGame();
 
-    // Start timer at first move
     if (!startTime) startTimer();
 
-    // Win condition
     if (player.row === exit.row && player.col === exit.col) {
       clearInterval(timerInterval);
       let elapsed = (Date.now() - startTime) / 1000;
@@ -142,7 +147,7 @@ function movePlayer(dr, dc) {
   }
 }
 
-// Controls (keyboard)
+// Keyboard
 document.addEventListener("keydown", (e) => {
   if (!gamePage.classList.contains("active")) return;
 
@@ -152,13 +157,13 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "ArrowRight" || e.key === "d") movePlayer(0, 1);
 });
 
-// Mobile arrows
+// Mobile buttons
 document.getElementById("up-btn").onclick = () => movePlayer(-1, 0);
 document.getElementById("down-btn").onclick = () => movePlayer(1, 0);
 document.getElementById("left-btn").onclick = () => movePlayer(0, -1);
 document.getElementById("right-btn").onclick = () => movePlayer(0, 1);
 
-// Page buttons
+// Buttons
 startBtn.onclick = () => {
   resetGame();
   showPage(gamePage);
@@ -175,5 +180,4 @@ backBtn.onclick = () => {
   resetGame();
   showPage(startPage);
 };
-
 
